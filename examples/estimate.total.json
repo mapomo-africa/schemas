@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "0.1",
+  "estimateId": "za-est-partyb-2026-total",
+  "country": "ZA",
+  "subject": {
+    "actor": {
+      "entityId": "za-ent-party-b",
+      "role": "beneficiary"
+    },
+    "electionRef": "za-municipal-2026",
+    "scope": "total"
+  },
+  "period": {
+    "start": "2026-09-01T00:00:00Z",
+    "end": "2026-11-30T23:59:59Z",
+    "precision": "day"
+  },
+  "value": {
+    "point": {
+      "amount": "14200000.00",
+      "currency": "ZAR"
+    },
+    "low": {
+      "amount": "9800000.00",
+      "currency": "ZAR"
+    },
+    "high": {
+      "amount": "21500000.00",
+      "currency": "ZAR"
+    },
+    "intervalType": "credible",
+    "intervalLevel": 0.9
+  },
+  "computation": {
+    "observationCount": 3841,
+    "observationQueryRef": "za/2026-municipal/party-b/all-channels@2026-12-05",
+    "unitCostIds": [
+      "za-uc-billboard-large-gt-2026q4"
+    ],
+    "uncertaintyMethod": "monte_carlo",
+    "iterations": 20000,
+    "coveragePenaltyApplied": true
+  },
+  "coverage": {
+    "channelsIncluded": [
+      "outdoor",
+      "broadcast_radio",
+      "digital_ad",
+      "rally"
+    ],
+    "channelsExcluded": [
+      "sms_voice",
+      "canvassing",
+      "merchandise"
+    ],
+    "geographicCoverage": "Six metropolitan municipalities and four district municipalities. Rural coverage is partial.",
+    "languagesCovered": [
+      "en",
+      "zu",
+      "af",
+      "xh"
+    ],
+    "knownGaps": "Door-to-door canvassing and messaging spend are not estimated. Both are known to be material in this election type, so the total is a floor for those channels rather than a complete figure."
+  },
+  "comparison": {
+    "declaredAmount": {
+      "amount": "6100000.00",
+      "currency": "ZAR"
+    },
+    "declaredSourceProvenance": {
+      "source": {
+        "type": "official_publication",
+        "publisher": "Electoral authority",
+        "title": "Party funding disclosure, Q4 2026",
+        "issuedAt": "2027-02-15",
+        "retrievedAt": "2027-02-16T08:00:00Z",
+        "accessMethod": "public"
+      },
+      "collection": {
+        "method": "manual",
+        "operatorOrg": "ANDAKIA"
+      },
+      "verification": {
+        "status": "human_verified"
+      }
+    },
+    "gap": {
+      "point": {
+        "amount": "8100000.00",
+        "currency": "ZAR"
+      },
+      "low": {
+        "amount": "3700000.00",
+        "currency": "ZAR"
+      },
+      "high": {
+        "amount": "15400000.00",
+        "currency": "ZAR"
+      },
+      "intervalType": "credible",
+      "intervalLevel": 0.9
+    },
+    "disclosureRegime": "partial",
+    "interpretationNote": "A difference between an estimate and a declaration is not evidence of wrongdoing. The declared figure covers a narrower set of categories than this estimate, disclosure thresholds exclude smaller items entirely, and this estimate carries its own uncertainty and coverage limits as stated above. The gap is published to show what disclosure does not capture, not to characterise the conduct of any actor."
+  },
+  "methodologyRef": {
+    "protocol": "total-spend-estimation",
+    "version": "0.1"
+  },
+  "provenance": {
+    "source": {
+      "type": "derived",
+      "retrievedAt": "2026-12-05T00:00:00Z"
+    },
+    "collection": {
+      "method": "automated",
+      "toolId": "money-flow-mapper",
+      "toolVersion": "0.1.0",
+      "operatorOrg": "ANDAKIA"
+    },
+    "verification": {
+      "status": "human_reviewed",
+      "verifiedAt": "2026-12-06T00:00:00Z",
+      "verifierOrg": "ANDAKIA",
+      "note": "Reviewed by two analysts. Coverage statement checked against the collection log."
+    },
+    "derivedFrom": [
+      "za-obs-000412"
+    ],
+    "methodologyRef": {
+      "protocol": "total-spend-estimation",
+      "version": "0.1"
+    }
+  },
+  "confidence": {
+    "grade": "B",
+    "evidenceStrength": {
+      "sourceIndependence": 3,
+      "humanVerified": true,
+      "fieldCalibrated": true
+    },
+    "knownBiases": [
+      {
+        "kind": "coverage_gap",
+        "direction": "underestimates",
+        "description": "Canvassing and messaging channels are excluded entirely.",
+        "magnitude": "material"
+      },
+      {
+        "kind": "urban_bias",
+        "direction": "underestimates",
+        "description": "Rural district coverage is partial, and rural activity is systematically less observable.",
+        "magnitude": "material"
+      }
+    ],
+    "publishable": true
+  },
+  "publication": {
+    "status": "published",
+    "publishedAt": "2026-12-10T09:00:00Z"
+  }
+}

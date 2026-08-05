@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/unit-cost.schema.json",
+  "title": "Unit cost",
+  "description": "What one unit of an observed trace costs, in one country, at one time. This is the bridge between a count and a sum of money, and it is where an estimate is most easily attacked. Every entry is sourced, dated and versioned; an unsourced unit cost is rejected rather than queued. Entries live in mapomo/reference-data under CC-BY-4.0.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$ref": "common.schema.json#/$defs/schemaVersion"
+    },
+    "unitCostId": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/countryCode"
+    },
+    "channel": {
+      "$ref": "observation.schema.json#/properties/channel"
+    },
+    "observedType": {
+      "type": "string",
+      "description": "Must match the observedType it prices."
+    },
+    "unit": {
+      "$ref": "common.schema.json#/$defs/quantity/properties/unit"
+    },
+    "price": {
+      "$ref": "common.schema.json#/$defs/money"
+    },
+    "priceRange": {
+      "type": "object",
+      "description": "Observed spread for this unit. Real markets are not a single number, and an estimate that ignores the spread understates its own uncertainty.",
+      "properties": {
+        "low": {
+          "$ref": "common.schema.json#/$defs/money"
+        },
+        "high": {
+          "$ref": "common.schema.json#/$defs/money"
+        }
+      },
+      "required": [
+        "low",
+        "high"
+      ],
+      "additionalProperties": false
+    },
+    "validity": {
+      "$ref": "common.schema.json#/$defs/timeWindow",
+      "description": "Period the price applies to. Prices during a campaign period are frequently not the list prices of the rest of the year."
+    },
+    "scope": {
+      "type": "object",
+      "description": "Where and to whom the price applies. A national average that hides a threefold urban to rural gap is worse than no figure.",
+      "properties": {
+        "admin1": {
+          "type": "string"
+        },
+        "urbanRural": {
+          "enum": [
+            "urban",
+            "peri_urban",
+            "rural",
+            "all"
+          ]
+        },
+        "tier": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "priceBasis": {
+      "enum": [
+        "published_rate_card",
+        "negotiated_observed",
+        "field_survey",
+        "expert_estimate",
+        "platform_reported"
+      ],
+      "description": "How the price was established. Published rate cards are frequently a ceiling rather than what is actually paid, which is why field-surveyed prices outrank them in confidence."
+    },
+    "discountFactor": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "description": "Multiplier applied to a list price to reflect what is actually paid, where that gap is known. Requires its own source."
+    },
+    "provenance": {
+      "$ref": "provenance.schema.json"
+    },
+    "confidence": {
+      "$ref": "confidence.schema.json"
+    },
+    "supersedes": {
+      "$ref": "common.schema.json#/$defs/id"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "unitCostId",
+    "country",
+    "channel",
+    "observedType",
+    "unit",
+    "price",
+    "validity",
+    "priceBasis",
+    "provenance",
+    "confidence"
+  ],
+  "additionalProperties": false
+}

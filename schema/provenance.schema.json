@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/provenance.schema.json",
+  "title": "Provenance",
+  "description": "Where a record came from and what was done to it. Mapomo's central claim is that its numbers are defensible, and a number is defensible only if its origin and its handling are both recoverable. Every observation, estimate and reference value carries provenance. A record without it is not incomplete, it is inadmissible.",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "object",
+      "description": "The origin of the raw material.",
+      "properties": {
+        "type": {
+          "enum": [
+            "field_observation",
+            "broadcast_monitoring",
+            "ad_library",
+            "web_capture",
+            "official_publication",
+            "rate_card",
+            "press_report",
+            "partner_dataset",
+            "derived"
+          ],
+          "description": "Kind of origin. 'derived' means it came from other Mapomo records, which must then be listed in derivedFrom."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Who issued or held the source. An organization, not an individual. Never a field observer's name."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or description of the source document or feed."
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the source itself was issued or published."
+        },
+        "retrievedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When Mapomo obtained it."
+        },
+        "locator": {
+          "type": "string",
+          "description": "URL, archive identifier or internal reference. Prefer an archived copy: an election-period URL is expected to rot or change."
+        },
+        "archiveHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash of the archived copy, so that later disputes are about interpretation and not about what the document said."
+        },
+        "license": {
+          "type": "string",
+          "description": "License or terms under which the source may be used and republished."
+        },
+        "accessMethod": {
+          "enum": [
+            "public",
+            "api_authenticated",
+            "purchased",
+            "provided_by_partner",
+            "field_collected"
+          ],
+          "description": "How access was obtained. Never record credentials or collection identifiers here."
+        }
+      },
+      "required": [
+        "type",
+        "retrievedAt"
+      ],
+      "additionalProperties": false
+    },
+    "collection": {
+      "type": "object",
+      "description": "How the raw material was turned into a record.",
+      "properties": {
+        "method": {
+          "enum": [
+            "manual",
+            "automated",
+            "assisted"
+          ],
+          "description": "'assisted' means a machine proposed and a human accepted or corrected."
+        },
+        "toolId": {
+          "type": "string",
+          "description": "Identifier of the Mapomo component that produced the record."
+        },
+        "toolVersion": {
+          "type": "string"
+        },
+        "modelId": {
+          "type": "string",
+          "description": "Model identifier where a model was involved, matching a card in mapomo/models."
+        },
+        "modelVersion": {
+          "type": "string"
+        },
+        "operatorOrg": {
+          "type": "string",
+          "description": "Organization that carried out the collection. Organizations, never individuals: naming a field observer in a public dataset can put them at risk."
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "description": "Human verification. Machines count; humans verify. Records state which happened.",
+      "properties": {
+        "status": {
+          "enum": [
+            "unverified",
+            "machine_only",
+            "human_reviewed",
+            "human_verified",
+            "disputed",
+            "retracted"
+          ],
+          "description": "'human_verified' requires an independent check against the source, not merely a glance at the machine output."
+        },
+        "verifiedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verifierOrg": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string",
+          "description": "What was checked, and anything the verifier could not confirm."
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "derivedFrom": {
+      "type": "array",
+      "description": "Identifiers of Mapomo records this one was computed from. Required when source.type is 'derived'. This is what makes an estimate traceable to the observations underneath it.",
+      "items": {
+        "$ref": "common.schema.json#/$defs/id"
+      }
+    },
+    "methodologyRef": {
+      "type": "object",
+      "description": "The versioned protocol under which this record was produced. Pinning the version is what allows a figure to be reproduced after the protocol changes.",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "description": "Protocol identifier in mapomo/methodology.",
+          "examples": [
+            "outdoor-advertising",
+            "broadcast-monitoring",
+            "rally-attendance"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of that protocol.",
+          "examples": [
+            "0.1",
+            "1.2.0"
+          ]
+        }
+      },
+      "required": [
+        "protocol",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "string",
+      "description": "Anything a later reader needs to judge the record, especially known weaknesses."
+    }
+  },
+  "required": [
+    "source",
+    "collection",
+    "verification"
+  ],
+  "additionalProperties": false
+}

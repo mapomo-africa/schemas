@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "0.1",
+  "entityId": "za-ent-party-b",
+  "country": "ZA",
+  "type": "party",
+  "label": {
+    "name": "Party B",
+    "isFictional": true,
+    "aliases": [
+      "Coalition B partner"
+    ]
+  },
+  "electionRefs": [
+    "za-municipal-2026"
+  ],
+  "relations": [
+    {
+      "type": "member_of",
+      "entityId": "za-ent-coalition-c",
+      "since": "2026-06-01",
+      "provenance": {
+        "source": {
+          "type": "press_report",
+          "publisher": "Publisher F",
+          "retrievedAt": "2026-06-05T00:00:00Z",
+          "accessMethod": "public"
+        },
+        "collection": {
+          "method": "manual",
+          "operatorOrg": "ANDAKIA"
+        },
+        "verification": {
+          "status": "human_reviewed"
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "source": {
+      "type": "official_publication",
+      "publisher": "Electoral authority",
+      "title": "Register of contesting parties",
+      "issuedAt": "2026-08-01",
+      "retrievedAt": "2026-08-10T00:00:00Z",
+      "accessMethod": "public"
+    },
+    "collection": {
+      "method": "manual",
+      "operatorOrg": "ANDAKIA"
+    },
+    "verification": {
+      "status": "human_verified"
+    }
+  },
+  "confidence": {
+    "grade": "A",
+    "evidenceStrength": {
+      "sourceIndependence": 1,
+      "humanVerified": true,
+      "fieldCalibrated": false
+    },
+    "publishable": true
+  }
+}

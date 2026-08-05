@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/entity.schema.json",
+  "title": "Entity",
+  "description": "An actor in the registry: a campaign, a party, a candidate, a third party spender, a broadcaster or a vendor. Observations and estimates reference entities by identifier and never inline a name, so that the sensitive layer sits in one place, is versioned, and can be published on a different schedule from the counts.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$ref": "common.schema.json#/$defs/schemaVersion"
+    },
+    "entityId": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/countryCode"
+    },
+    "type": {
+      "enum": [
+        "candidate",
+        "party",
+        "coalition",
+        "campaign",
+        "third_party",
+        "broadcaster",
+        "publisher",
+        "vendor",
+        "platform",
+        "government_body",
+        "observer_org"
+      ],
+      "description": "What the entity is."
+    },
+    "label": {
+      "type": "object",
+      "description": "Display name. In public examples, fixtures and test data this is always a fictional label such as 'Candidate A'. Real names appear only in a deployed, country-scoped registry, never in this repository.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isFictional": {
+          "type": "boolean",
+          "description": "True for every entity in examples, tests and documentation. CI rejects fixtures where this is false."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "isFictional"
+      ],
+      "additionalProperties": false
+    },
+    "electionRefs": {
+      "type": "array",
+      "description": "Elections this entity takes part in, referencing the country configuration.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "description": "Structural links to other entities. Kept explicit because spending routed through a coalition member or a friendly third party is the normal case, not the exception.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "member_of",
+              "controls",
+              "affiliated_with",
+              "supplier_to",
+              "subsidiary_of"
+            ]
+          },
+          "entityId": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "since": {
+            "type": "string",
+            "format": "date"
+          },
+          "until": {
+            "type": "string",
+            "format": "date"
+          },
+          "provenance": {
+            "$ref": "provenance.schema.json"
+          }
+        },
+        "required": [
+          "type",
+          "entityId",
+          "provenance"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "declaredFinance": {
+      "type": "array",
+      "description": "What this entity officially declared, where a disclosure regime exists. This is the counterpart the estimate is compared against, and its absence is itself a finding.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "$ref": "common.schema.json#/$defs/timeWindow"
+          },
+          "amount": {
+            "$ref": "common.schema.json#/$defs/money"
+          },
+          "category": {
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "provenance.schema.json"
+          }
+        },
+        "required": [
+          "period",
+          "amount",
+          "provenance"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "provenance": {
+      "$ref": "provenance.schema.json"
+    },
+    "confidence": {
+      "$ref": "confidence.schema.json"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "entityId",
+    "country",
+    "type",
+    "label",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

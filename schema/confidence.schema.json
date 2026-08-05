@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/confidence.schema.json",
+  "title": "Confidence",
+  "description": "How much weight a record can bear, and why. Deliberately separates the numeric uncertainty of a value from the qualitative strength of the evidence behind it: a precisely counted number from a single unverified source is not the same object as a roughly counted number confirmed three ways, and collapsing them into one score hides exactly what a reader needs.",
+  "type": "object",
+  "properties": {
+    "grade": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "A: independently verified against a primary source, method validated in the field. B: single reliable source, human reviewed, method validated. C: automated collection, not yet human verified, or a source of uneven reliability. D: indicative only, published to show the shape of a gap rather than to support a claim."
+    },
+    "evidenceStrength": {
+      "type": "object",
+      "properties": {
+        "sourceIndependence": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of mutually independent sources supporting the record. Two feeds from the same publisher count as one."
+        },
+        "humanVerified": {
+          "type": "boolean"
+        },
+        "fieldCalibrated": {
+          "type": "boolean",
+          "description": "Whether the underlying unit costs were calibrated against ground truth in this country and this cycle."
+        }
+      },
+      "required": [
+        "sourceIndependence",
+        "humanVerified"
+      ],
+      "additionalProperties": false
+    },
+    "knownBiases": {
+      "type": "array",
+      "description": "Directional weaknesses the producer of the record is aware of. Stating these is not a disclaimer, it is what distinguishes an estimate from an accusation.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "undercount",
+              "overcount",
+              "coverage_gap",
+              "urban_bias",
+              "language_gap",
+              "temporal_gap",
+              "price_staleness",
+              "selection_bias"
+            ]
+          },
+          "direction": {
+            "enum": [
+              "overestimates",
+              "underestimates",
+              "unclear"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "magnitude": {
+            "enum": [
+              "negligible",
+              "moderate",
+              "material",
+              "unknown"
+            ],
+            "description": "'material' means the bias could change the conclusion a reader would draw."
+          }
+        },
+        "required": [
+          "kind",
+          "direction",
+          "description"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "publishable": {
+      "type": "boolean",
+      "description": "Whether this record may appear in public output. Grade D records are frequently retained for internal analysis and withheld from publication."
+    },
+    "reviewNote": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "grade",
+    "evidenceStrength",
+    "publishable"
+  ],
+  "additionalProperties": false
+}

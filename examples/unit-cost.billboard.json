@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "0.1",
+  "unitCostId": "za-uc-billboard-large-gt-2026q4",
+  "country": "ZA",
+  "channel": "outdoor",
+  "observedType": "billboard_large",
+  "unit": "count",
+  "price": {
+    "amount": "48000.00",
+    "currency": "ZAR",
+    "asOf": "2026-10-01"
+  },
+  "priceRange": {
+    "low": {
+      "amount": "31000.00",
+      "currency": "ZAR"
+    },
+    "high": {
+      "amount": "72000.00",
+      "currency": "ZAR"
+    }
+  },
+  "validity": {
+    "start": "2026-10-01T00:00:00Z",
+    "end": "2026-12-31T23:59:59Z",
+    "precision": "day"
+  },
+  "scope": {
+    "admin1": "GT",
+    "urbanRural": "urban",
+    "tier": "prime"
+  },
+  "priceBasis": "field_survey",
+  "discountFactor": 0.75,
+  "provenance": {
+    "source": {
+      "type": "rate_card",
+      "publisher": "Outdoor Vendor E",
+      "title": "Q4 2026 rate card, Gauteng inventory",
+      "issuedAt": "2026-09-15",
+      "retrievedAt": "2026-09-28T14:00:00Z",
+      "locator": "archive://za/rate-cards/vendor-e-2026q4.pdf",
+      "archiveHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "accessMethod": "public"
+    },
+    "collection": {
+      "method": "manual",
+      "operatorOrg": "ANDAKIA"
+    },
+    "verification": {
+      "status": "human_verified",
+      "verifiedAt": "2026-09-30T10:00:00Z",
+      "verifierOrg": "ANDAKIA",
+      "note": "List price cross-checked against three negotiated placements reported by media buyers; the 0.75 discount factor is the median of those three."
+    },
+    "methodologyRef": {
+      "protocol": "unit-cost-calibration",
+      "version": "0.1"
+    }
+  },
+  "confidence": {
+    "grade": "B",
+    "evidenceStrength": {
+      "sourceIndependence": 3,
+      "humanVerified": true,
+      "fieldCalibrated": true
+    },
+    "knownBiases": [
+      {
+        "kind": "price_staleness",
+        "direction": "underestimates",
+        "description": "Campaign-period demand can push realised prices above the surveyed range in the final two weeks.",
+        "magnitude": "moderate"
+      }
+    ],
+    "publishable": true
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/common.schema.json",
+  "title": "Mapomo common definitions",
+  "description": "Shared building blocks referenced by every other Mapomo schema. Contains no top-level object of its own.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier, unique within its type and country. Lowercase, URL safe.",
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$",
+      "examples": [
+        "sn-obs-000124",
+        "ng-ent-party-b"
+      ]
+    },
+    "countryCode": {
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2, uppercase. The only place a real jurisdiction is named in Mapomo documents.",
+      "pattern": "^[A-Z]{2}$",
+      "examples": [
+        "SN",
+        "NG",
+        "GH",
+        "KE",
+        "ZA",
+        "CD"
+      ]
+    },
+    "currencyCode": {
+      "type": "string",
+      "description": "ISO 4217 alpha-3, uppercase.",
+      "pattern": "^[A-Z]{3}$",
+      "examples": [
+        "XOF",
+        "NGN",
+        "GHS",
+        "KES",
+        "ZAR",
+        "CDF",
+        "USD"
+      ]
+    },
+    "money": {
+      "type": "object",
+      "description": "A monetary amount. Always carries its currency; never a bare number. Amounts are decimal strings to avoid binary floating point error in financial aggregation.",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^-?[0-9]+(\\.[0-9]{1,6})?$",
+          "description": "Decimal amount as a string, in the major unit of the currency."
+        },
+        "currency": {
+          "$ref": "#/$defs/currencyCode"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the amount is expressed in. Required when a conversion or a deflator was applied, so the figure stays reproducible."
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "moneyInterval": {
+      "type": "object",
+      "description": "An estimated amount with an uncertainty interval. Mapomo never publishes a point estimate without one.",
+      "properties": {
+        "point": {
+          "$ref": "#/$defs/money",
+          "description": "Central estimate."
+        },
+        "low": {
+          "$ref": "#/$defs/money",
+          "description": "Lower bound of the interval."
+        },
+        "high": {
+          "$ref": "#/$defs/money",
+          "description": "Upper bound of the interval."
+        },
+        "intervalType": {
+          "enum": [
+            "credible",
+            "confidence",
+            "range"
+          ],
+          "description": "How the interval is to be read. 'range' means plausible bounds with no probabilistic claim."
+        },
+        "intervalLevel": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "description": "Probability mass covered, for credible or confidence intervals. 0.9 means a 90 percent interval."
+        }
+      },
+      "required": [
+        "point",
+        "low",
+        "high",
+        "intervalType"
+      ],
+      "additionalProperties": false
+    },
+    "timeWindow": {
+      "type": "object",
+      "description": "A closed or open time window. Observations are rarely instantaneous and pretending otherwise loses information.",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "precision": {
+          "enum": [
+            "instant",
+            "hour",
+            "day",
+            "week",
+            "month"
+          ],
+          "description": "Granularity actually known, as opposed to the granularity the timestamp format can express."
+        }
+      },
+      "required": [
+        "start",
+        "precision"
+      ],
+      "additionalProperties": false
+    },
+    "place": {
+      "type": "object",
+      "description": "Where something was observed. Coordinates are optional and deliberately coarse by default: precise coordinates plus a timestamp can identify the field observer who collected the record.",
+      "properties": {
+        "country": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "admin1": {
+          "type": "string",
+          "description": "First-level administrative division code or name, as used in the country configuration."
+        },
+        "admin2": {
+          "type": "string",
+          "description": "Second-level administrative division."
+        },
+        "locality": {
+          "type": "string"
+        },
+        "point": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lon": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "precisionMeters": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Radius within which the true location lies. Values below 100 require a documented reason, since they can expose a collector."
+            }
+          },
+          "required": [
+            "lat",
+            "lon",
+            "precisionMeters"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "country"
+      ],
+      "additionalProperties": false
+    },
+    "quantity": {
+      "type": "object",
+      "description": "A counted quantity with its unit and its own uncertainty. A crowd of 'about 4000' is not the number 4000.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "enum": [
+            "count",
+            "persons",
+            "seconds",
+            "impressions",
+            "square_meters",
+            "days",
+            "vehicles",
+            "spots"
+          ],
+          "description": "Unit of the counted quantity."
+        },
+        "low": {
+          "type": "number",
+          "minimum": 0
+        },
+        "high": {
+          "type": "number",
+          "minimum": 0
+        },
+        "estimationBasis": {
+          "enum": [
+            "exact_count",
+            "automated_count",
+            "sampled_extrapolation",
+            "expert_judgment",
+            "declared_by_source"
+          ],
+          "description": "How this number was arrived at. Drives how much the uncertainty propagates downstream."
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "estimationBasis"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^0\\.1(\\.[0-9]+)?$",
+      "description": "Version of the Mapomo schema set this document conforms to."
+    },
+    "actorRef": {
+      "type": "object",
+      "description": "A reference to an entity in the registry. Never an inline real name: documents carry identifiers, and identifiers resolve through the country's entity registry.",
+      "properties": {
+        "entityId": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "enum": [
+            "beneficiary",
+            "payer",
+            "vendor",
+            "broadcaster",
+            "publisher",
+            "observer_org",
+            "unknown"
+          ],
+          "description": "Relationship of this entity to the record, not its nature. Nature lives on the entity itself."
+        }
+      },
+      "required": [
+        "entityId",
+        "role"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

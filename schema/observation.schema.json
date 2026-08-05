@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/observation.schema.json",
+  "title": "Observation",
+  "description": "One counted trace of campaign activity, before any money is attached. An observation states what was seen, where, when, how much of it, and who it appears to benefit. It carries no monetary value: pricing happens in the estimate, using reference data, so that a repricing never requires recollecting the field.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$ref": "common.schema.json#/$defs/schemaVersion"
+    },
+    "observationId": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/countryCode"
+    },
+    "channel": {
+      "enum": [
+        "outdoor",
+        "print",
+        "broadcast_radio",
+        "broadcast_tv",
+        "digital_ad",
+        "digital_organic",
+        "rally",
+        "convoy",
+        "merchandise",
+        "canvassing",
+        "sms_voice"
+      ],
+      "description": "The channel the trace belongs to. Determines which unit-cost family applies."
+    },
+    "observedType": {
+      "type": "string",
+      "description": "Specific trace within the channel, matching a unit-cost key in reference-data.",
+      "examples": [
+        "billboard_large",
+        "poster_a1",
+        "spot_30s",
+        "branded_vehicle_day",
+        "tshirt",
+        "rally_attendance"
+      ]
+    },
+    "window": {
+      "$ref": "common.schema.json#/$defs/timeWindow"
+    },
+    "place": {
+      "$ref": "common.schema.json#/$defs/place"
+    },
+    "quantity": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "attribution": {
+      "type": "object",
+      "description": "Who the activity appears to benefit, and how sure we are of that. Attribution is separated from observation on purpose: a miscounted billboard is a data error, a misattributed one is an accusation.",
+      "properties": {
+        "actors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/actorRef"
+          }
+        },
+        "basis": {
+          "enum": [
+            "explicit_branding",
+            "disclaimer_text",
+            "platform_declared",
+            "contextual_inference",
+            "reported_by_source"
+          ],
+          "description": "What the attribution rests on. 'contextual_inference' may not support a grade above C."
+        },
+        "ambiguous": {
+          "type": "boolean",
+          "description": "True when more than one actor could plausibly be the beneficiary. Ambiguous observations are still recorded; they are excluded from per-actor totals and reported as an unattributed pool."
+        }
+      },
+      "required": [
+        "actors",
+        "basis"
+      ],
+      "additionalProperties": false
+    },
+    "mediaAttributes": {
+      "type": "object",
+      "description": "Channel-specific detail needed to price the trace. Kept as an open object on purpose: the priceable attributes of a radio spot and of a billboard have nothing in common, and forcing them into one shape would either lose information or produce a schema nobody can read.",
+      "properties": {
+        "durationSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "surfaceSquareMeters": {
+          "type": "number",
+          "minimum": 0
+        },
+        "impressions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "language": {
+          "type": "string",
+          "description": "BCP 47 tag. Elections happen in Wolof, Pulaar and Hausa, and tooling that only reads English misses the story.",
+          "examples": [
+            "wo",
+            "ff",
+            "ha",
+            "fr",
+            "en",
+            "sw"
+          ]
+        },
+        "placementTier": {
+          "type": "string",
+          "description": "Rate-card tier, matching reference-data.",
+          "examples": [
+            "prime",
+            "standard",
+            "off_peak"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "description": "Distribution platform for digital channels."
+        }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "description": "What supports the observation. Archived rather than linked wherever possible, since election-period sources disappear.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "photo",
+              "video",
+              "audio",
+              "screenshot",
+              "document",
+              "api_record",
+              "field_note"
+            ]
+          },
+          "locator": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "redacted": {
+            "type": "boolean",
+            "description": "True where the material was altered before storage to protect a person. Faces and identifying context are removed by default."
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "provenance": {
+      "$ref": "provenance.schema.json"
+    },
+    "confidence": {
+      "$ref": "confidence.schema.json"
+    },
+    "supersedes": {
+      "$ref": "common.schema.json#/$defs/id",
+      "description": "Identifier of an earlier observation this one corrects. Records are corrected by superseding, never by editing in place."
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "observationId",
+    "country",
+    "channel",
+    "observedType",
+    "window",
+    "place",
+    "quantity",
+    "attribution",
+    "provenance",
+    "confidence"
+  ],
+  "additionalProperties": false
+}

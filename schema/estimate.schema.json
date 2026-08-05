@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/estimate.schema.json",
+  "title": "Estimate",
+  "description": "A monetary estimate of campaign spending, derived from observations and unit costs. This is the document the whole system exists to produce, and the one that will be quoted, challenged and litigated. It therefore always carries an interval, the protocol version that produced it, the inputs it derives from, the biases its authors know about, and, where a disclosure regime exists, the declared figure it is set against.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$ref": "common.schema.json#/$defs/schemaVersion"
+    },
+    "estimateId": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/countryCode"
+    },
+    "subject": {
+      "type": "object",
+      "description": "What is being estimated and for whom.",
+      "properties": {
+        "actor": {
+          "$ref": "common.schema.json#/$defs/actorRef"
+        },
+        "electionRef": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "total",
+            "by_channel",
+            "by_region",
+            "by_period"
+          ],
+          "description": "Granularity of this estimate. Totals and breakdowns are separate documents so that a partial figure can never be mistaken for a complete one."
+        },
+        "channel": {
+          "$ref": "observation.schema.json#/properties/channel",
+          "description": "Present when scope is by_channel."
+        },
+        "admin1": {
+          "type": "string",
+          "description": "Present when scope is by_region."
+        }
+      },
+      "required": [
+        "actor",
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    "period": {
+      "$ref": "common.schema.json#/$defs/timeWindow"
+    },
+    "value": {
+      "$ref": "common.schema.json#/$defs/moneyInterval"
+    },
+    "computation": {
+      "type": "object",
+      "description": "How the number was reached, in enough detail that a third party with the same inputs reaches the same figure.",
+      "properties": {
+        "observationCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "description": "Observations that contributed. May be omitted in public output where volume makes it impractical, in which case a query reference is required."
+        },
+        "observationQueryRef": {
+          "type": "string",
+          "description": "Reproducible reference to the observation set, when identifiers are not enumerated."
+        },
+        "unitCostIds": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/id"
+          }
+        },
+        "uncertaintyMethod": {
+          "enum": [
+            "monte_carlo",
+            "analytic_propagation",
+            "interval_arithmetic",
+            "expert_bounds"
+          ],
+          "description": "How the interval was produced."
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "For monte_carlo."
+        },
+        "coveragePenaltyApplied": {
+          "type": "boolean",
+          "description": "Whether the interval was widened to reflect known gaps in collection coverage. Failing to do this is the most common way an estimate looks more precise than it is."
+        }
+      },
+      "required": [
+        "observationCount",
+        "uncertaintyMethod"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "description": "What the estimate does and does not cover. A figure without this is not interpretable, because a reader cannot tell a low estimate from a narrow one.",
+      "properties": {
+        "channelsIncluded": {
+          "type": "array",
+          "items": {
+            "$ref": "observation.schema.json#/properties/channel"
+          }
+        },
+        "channelsExcluded": {
+          "type": "array",
+          "items": {
+            "$ref": "observation.schema.json#/properties/channel"
+          }
+        },
+        "geographicCoverage": {
+          "type": "string",
+          "description": "Which regions were actually observed, as opposed to which the estimate is labelled with."
+        },
+        "languagesCovered": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "BCP 47 tags. A national estimate built only from French-language monitoring in a country that campaigns in Wolof has a coverage gap that belongs here, stated, not buried."
+        },
+        "knownGaps": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "channelsIncluded"
+      ],
+      "additionalProperties": false
+    },
+    "comparison": {
+      "type": "object",
+      "description": "The estimate set against what was officially declared, where anything was. The gap is the finding; it is presented as a gap, never as a claim of wrongdoing.",
+      "properties": {
+        "declaredAmount": {
+          "$ref": "common.schema.json#/$defs/money"
+        },
+        "declaredSourceProvenance": {
+          "$ref": "provenance.schema.json"
+        },
+        "gap": {
+          "$ref": "common.schema.json#/$defs/moneyInterval"
+        },
+        "disclosureRegime": {
+          "enum": [
+            "none",
+            "partial",
+            "full",
+            "not_yet_due"
+          ],
+          "description": "'none' and 'not_yet_due' mean the absence of a declared figure is expected and carries no implication whatsoever."
+        },
+        "interpretationNote": {
+          "type": "string",
+          "description": "Required whenever a gap is published. States plainly that a difference between an estimate and a declaration has innocent explanations, including scope differences, timing and the limits of this estimate."
+        }
+      },
+      "additionalProperties": false
+    },
+    "methodologyRef": {
+      "$ref": "provenance.schema.json#/properties/methodologyRef"
+    },
+    "provenance": {
+      "$ref": "provenance.schema.json"
+    },
+    "confidence": {
+      "$ref": "confidence.schema.json"
+    },
+    "publication": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "internal",
+            "published",
+            "corrected",
+            "retracted"
+          ]
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "correctionOf": {
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "correctionNote": {
+          "type": "string",
+          "description": "Required when status is 'corrected' or 'retracted'. What changed, why, and how the previous figure differed. Numbers are corrected in public with a dated note, never edited quietly."
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "estimateId",
+    "country",
+    "subject",
+    "period",
+    "value",
+    "computation",
+    "coverage",
+    "methodologyRef",
+    "provenance",
+    "confidence",
+    "publication"
+  ],
+  "additionalProperties": false
+}

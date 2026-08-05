@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "0.1",
+  "observationId": "za-obs-000412",
+  "country": "ZA",
+  "channel": "outdoor",
+  "observedType": "billboard_large",
+  "window": {
+    "start": "2026-11-01T00:00:00Z",
+    "end": "2026-11-30T23:59:59Z",
+    "precision": "day"
+  },
+  "place": {
+    "country": "ZA",
+    "admin1": "GT",
+    "locality": "Locality 7",
+    "point": {
+      "lat": -26.2,
+      "lon": 28.05,
+      "precisionMeters": 500
+    }
+  },
+  "quantity": {
+    "value": 1,
+    "unit": "count",
+    "estimationBasis": "exact_count"
+  },
+  "attribution": {
+    "actors": [
+      {
+        "entityId": "za-ent-party-b",
+        "role": "beneficiary"
+      }
+    ],
+    "basis": "explicit_branding",
+    "ambiguous": false
+  },
+  "mediaAttributes": {
+    "surfaceSquareMeters": 36,
+    "placementTier": "prime",
+    "language": "en"
+  },
+  "evidence": [
+    {
+      "kind": "photo",
+      "locator": "archive://za/2026-11/obs-000412.jpg",
+      "hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "redacted": true
+    }
+  ],
+  "provenance": {
+    "source": {
+      "type": "field_observation",
+      "publisher": "Observer Org D",
+      "retrievedAt": "2026-11-03T09:12:00Z",
+      "accessMethod": "field_collected"
+    },
+    "collection": {
+      "method": "assisted",
+      "toolId": "visibility-index",
+      "toolVersion": "0.1.0",
+      "modelId": "mapomo-africa/outdoor-detect",
+      "modelVersion": "0.1.0",
+      "operatorOrg": "Observer Org D"
+    },
+    "verification": {
+      "status": "human_verified",
+      "verifiedAt": "2026-11-04T11:00:00Z",
+      "verifierOrg": "Observer Org D",
+      "note": "Billboard dimensions confirmed against the site owner's published inventory. Attribution confirmed from branding visible in the photograph."
+    },
+    "methodologyRef": {
+      "protocol": "outdoor-advertising",
+      "version": "0.1"
+    }
+  },
+  "confidence": {
+    "grade": "A",
+    "evidenceStrength": {
+      "sourceIndependence": 2,
+      "humanVerified": true,
+      "fieldCalibrated": true
+    },
+    "knownBiases": [
+      {
+        "kind": "coverage_gap",
+        "direction": "underestimates",
+        "description": "Only sites along primary roads were surveyed; secondary road inventory is not covered in this cycle.",
+        "magnitude": "moderate"
+      }
+    ],
+    "publishable": true
+  }
+}
