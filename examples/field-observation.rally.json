@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "0.1",
+  "reportId": "ng-fobs-000412",
+  "country": "NG",
+  "observerOrg": {
+    "entityId": "ng-ent-observer-org-a",
+    "role": "observer_org"
+  },
+  "observerRef": "OBS-4471-K",
+  "deployment": {
+    "place": {
+      "country": "NG",
+      "admin1": "State A",
+      "locality": "Locality A"
+    },
+    "assignmentType": "event",
+    "coverageWindow": {
+      "start": "2026-09-03T14:00:00Z",
+      "end": "2026-09-03T18:30:00Z",
+      "precision": "hour"
+    }
+  },
+  "sightings": [
+    {
+      "channel": "rally",
+      "observedType": "rally_attendance",
+      "quantity": {
+        "value": 4000,
+        "unit": "persons",
+        "low": 3000,
+        "high": 5500,
+        "estimationBasis": "sampled_extrapolation"
+      },
+      "attribution": {
+        "actors": [
+          {
+            "entityId": "ng-ent-party-b",
+            "role": "beneficiary"
+          }
+        ],
+        "brandingSeen": "party_logo",
+        "unclear": false
+      },
+      "language": "ha",
+      "evidence": [
+        {
+          "kind": "photo",
+          "hash": "sha256:3f2a9c1b6d4e8f0a2b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f90",
+          "redacted": true
+        }
+      ],
+      "note": "Counted by block sampling from the stage side; crowd thinned after the second hour."
+    },
+    {
+      "channel": "merchandise",
+      "observedType": "tshirt",
+      "quantity": {
+        "value": 1200,
+        "unit": "count",
+        "estimationBasis": "sampled_extrapolation"
+      },
+      "attribution": {
+        "actors": [
+          {
+            "entityId": "ng-ent-party-b",
+            "role": "beneficiary"
+          }
+        ],
+        "brandingSeen": "party_logo",
+        "unclear": false
+      },
+      "condition": "new"
+    }
+  ],
+  "submission": {
+    "channel": "mobile_app",
+    "submittedAt": "2026-09-03T19:05:00Z",
+    "receivedAt": "2026-09-03T21:40:00Z",
+    "instrumentVersion": "yiaga-observer-form-3.2"
+  },
+  "verification": {
+    "status": "org_verified",
+    "reviewedAt": "2026-09-04",
+    "method": "photo_check"
+  },
+  "conversion": {
+    "observationIds": [
+      "ng-obs-001884",
+      "ng-obs-001885"
+    ],
+    "mappingVersion": "0.1"
+  },
+  "provenance": {
+    "source": {
+      "type": "field_observation",
+      "publisher": "Observer Org A",
+      "retrievedAt": "2026-09-03T21:40:00Z",
+      "accessMethod": "field_collected"
+    },
+    "collection": {
+      "method": "manual",
+      "toolId": "observer-instrument",
+      "toolVersion": "3.2",
+      "operatorOrg": "Observer Org A"
+    },
+    "verification": {
+      "status": "human_verified",
+      "verifiedAt": "2026-09-04T10:00:00Z",
+      "verifierOrg": "Observer Org A",
+      "note": "Submitted photographs checked against the reported counts by the deploying organisation's desk team."
+    },
+    "methodologyRef": {
+      "protocol": "unit-cost-calibration",
+      "version": "0.1"
+    }
+  },
+  "confidence": {
+    "grade": "B",
+    "evidenceStrength": {
+      "sourceIndependence": 1,
+      "humanVerified": true,
+      "fieldCalibrated": true
+    },
+    "knownBiases": [
+      {
+        "kind": "overcount",
+        "direction": "unclear",
+        "magnitude": "moderate",
+        "description": "Crowd size is a block-sample extrapolation taken from one vantage point, and attendance varied across the event."
+      }
+    ],
+    "publishable": true
+  }
+}

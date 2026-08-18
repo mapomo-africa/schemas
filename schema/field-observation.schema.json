@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.mapomo.org/v0.1/field-observation.schema.json",
+  "title": "Field observation",
+  "description": "What a trained field observer submits from the ground, before it becomes an observation. It is kept separate from `observation` on purpose: an observer reports what they saw with their own uncertainty, in the shape of the instrument they already use, and the conversion to a priceable observation is a documented step that can be re-run when the mapping improves. The shape follows the YIAGA Africa observer instrument so that an existing deployment of several thousand observers can submit without being retrained on our vocabulary.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "reportId": { "$ref": "common.schema.json#/$defs/id" },
+    "country": { "$ref": "common.schema.json#/$defs/countryCode" },
+    "observerOrg": {
+      "$ref": "common.schema.json#/$defs/actorRef",
+      "description": "The organisation that deployed the observer. The individual observer is never identified in a Mapomo document; the organisation holds that mapping and we do not."
+    },
+    "observerRef": {
+      "type": "string",
+      "description": "Opaque, org-issued code for the observer, stable enough to detect a systematically deviant reporter and meaningless outside the deploying organisation. Never a name, a phone number or a device identifier.",
+      "pattern": "^[A-Za-z0-9._-]{3,64}$"
+    },
+    "deployment": {
+      "type": "object",
+      "description": "Where the observer was posted. Assignment area, not live position: an observer's real-time location is not ours to hold.",
+      "properties": {
+        "place": { "$ref": "common.schema.json#/$defs/place" },
+        "assignmentType": {
+          "enum": ["stationary", "roving", "event", "media_monitoring"],
+          "description": "A roving observer covers ground a stationary one does not; the same count means different things."
+        },
+        "coverageWindow": { "$ref": "common.schema.json#/$defs/timeWindow" }
+      },
+      "required": ["place", "assignmentType", "coverageWindow"],
+      "additionalProperties": false
+    },
+    "sightings": {
+      "type": "array",
+      "minItems": 1,
+      "description": "What was seen during the coverage window. One entry per trace type; an entry with a count of zero is information, not an empty record, and is kept.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": { "$ref": "observation.schema.json#/properties/channel" },
+          "observedType": { "$ref": "observation.schema.json#/properties/observedType" },
+          "quantity": { "$ref": "common.schema.json#/$defs/quantity" },
+          "attribution": {
+            "type": "object",
+            "description": "What the observer read off the material itself. An observer records the branding they saw; they do not decide who is behind it.",
+            "properties": {
+              "actors": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/actorRef" } },
+              "brandingSeen": {
+                "enum": ["party_logo", "candidate_image", "slogan_only", "disclaimer_text", "none"],
+                "description": "The physical mark the attribution rests on."
+              },
+              "unclear": { "type": "boolean" }
+            },
+            "required": ["brandingSeen"],
+            "additionalProperties": false
+          },
+          "condition": {
+            "enum": ["new", "weathered", "damaged", "removed_since"],
+            "description": "State of the material. A weathered poster prices differently from one put up this week, and 'removed_since' is how a takedown gets recorded."
+          },
+          "language": {
+            "type": "string",
+            "description": "BCP 47 tag of the message, where there is one. Language of the ground campaign is a finding in itself.",
+            "examples": ["ha", "wo", "ff", "yo", "ig", "fr", "en"]
+          },
+          "evidence": { "$ref": "observation.schema.json#/properties/evidence" },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Free text from the observer, in their language. Never contains a person's name; the submission form says so and the intake check enforces it."
+          }
+        },
+        "required": ["channel", "observedType", "quantity", "attribution"],
+        "additionalProperties": false
+      }
+    },
+    "submission": {
+      "type": "object",
+      "description": "How the report reached us. Rural submissions arrive late and out of order, and a pipeline that assumes otherwise silently drops the places that matter most.",
+      "properties": {
+        "channel": { "enum": ["mobile_app", "sms", "ussd", "voice_call", "paper_transcribed", "api"] },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "receivedAt": { "type": "string", "format": "date-time" },
+        "instrumentVersion": {
+          "type": "string",
+          "description": "Version of the observer form the report was filled on. Two versions of a question are two different questions."
+        }
+      },
+      "required": ["channel", "submittedAt", "receivedAt"],
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "description": "What the deploying organisation did with the report before it reached us. Their quality control is part of our provenance, not a black box upstream of it.",
+      "properties": {
+        "status": { "enum": ["unverified", "org_reviewed", "org_verified", "disputed", "rejected"] },
+        "reviewedAt": { "type": "string", "format": "date" },
+        "method": {
+          "enum": ["desk_review", "second_observer", "photo_check", "supervisor_visit", "none"]
+        },
+        "note": { "type": "string", "maxLength": 2000 }
+      },
+      "required": ["status"],
+      "additionalProperties": false
+    },
+    "conversion": {
+      "type": "object",
+      "description": "The link to whatever this report became. Written by the intake step, never by the observer. A report that produced no observation keeps a reason, because a systematic reason is a finding about the instrument.",
+      "properties": {
+        "observationIds": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/id" }
+        },
+        "mappingVersion": {
+          "type": "string",
+          "description": "Version of the instrument-to-observation mapping used. Re-running an old report through a new mapping must be reproducible."
+        },
+        "notConvertedReason": {
+          "enum": ["below_quality_threshold", "unattributable", "duplicate", "out_of_scope", "awaiting_review"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "provenance": { "$ref": "provenance.schema.json" },
+    "confidence": { "$ref": "confidence.schema.json" },
+    "supersedes": { "$ref": "common.schema.json#/$defs/id" }
+  },
+  "required": [
+    "schemaVersion",
+    "reportId",
+    "country",
+    "observerOrg",
+    "deployment",
+    "sightings",
+    "submission",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

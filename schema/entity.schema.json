@@ -45,7 +45,8 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Other written forms of the name actually encountered in sources: abbreviations, transliterations, misspellings that recur, and the local-language form. An alias list is not decoration: it is the join key of the whole system, and a missing alias shows up downstream as an actor who spent nothing."
         }
       },
       "required": [
@@ -131,6 +132,67 @@
     },
     "confidence": {
       "$ref": "confidence.schema.json"
+    },
+    "matching": {
+      "type": "object",
+      "description": "How raw strings from collectors resolve to this entity. Kept on the entity rather than in collector code so that a resolution rule is versioned, sourced and reviewable like any other record. Rules are applied after the normalisation described in ALIASES.md.",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "Regular expressions matched against a normalised candidate string. Anchored by the resolver; write them without anchors.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platformHandles": {
+          "type": "array",
+          "description": "Account identifiers this entity controls on a platform. A handle is evidence of control and needs the same provenance as any other claim.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string"
+              },
+              "handle": {
+                "type": "string"
+              },
+              "verifiedByPlatform": {
+                "type": "boolean"
+              },
+              "provenance": {
+                "$ref": "provenance.schema.json"
+              }
+            },
+            "required": [
+              "platform",
+              "handle",
+              "provenance"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "disclaimerStrings": {
+          "type": "array",
+          "description": "Paid-for-by strings as they appear in ad libraries. These are the strongest attribution basis available for digital ads and the reason platform_declared outranks contextual inference.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "doNotMatch": {
+          "type": "array",
+          "description": "Strings that look like this entity and are not. A known-confusion list is how a resolver stops making the same wrong join every week.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minimumScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fuzzy-match threshold below which a candidate is queued for human review rather than joined. Defaults to the country configuration."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

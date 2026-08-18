@@ -7,8 +7,10 @@ This is the most important repository in the project. Everything depends on it;
 it depends on nothing. It is what makes four separate tools one system, and what
 lets a figure produced in Dakar be read, checked and compared in Nairobi.
 
-Version **0.1**. Published before the Lab, deliberately, so that four build teams
-work against one contract instead of producing four incompatible formats. See
+Version **0.1.0**, frozen on 18 August 2026 and tagged `v0.1.0`. Published before
+the Lab, deliberately, so that four build teams work against one contract instead
+of producing four incompatible formats. It does not change during the Lab week:
+corrections raised there land in 0.2, with a migration note. See
 [ADR 0005](https://github.com/mapomo-africa/mapomo/blob/main/decisions/0005-schemas-are-the-contract.md).
 
 ## The documents
@@ -17,18 +19,23 @@ work against one contract instead of producing four incompatible formats. See
 |---|---|
 | [`entity`](schema/entity.schema.json) | An actor: candidate, party, coalition, third party, broadcaster, vendor |
 | [`observation`](schema/observation.schema.json) | One counted trace of campaign activity, with no money attached |
+| [`field-observation`](schema/field-observation.schema.json) | What a field observer submits from the ground, before it becomes an observation |
 | [`unit-cost`](schema/unit-cost.schema.json) | What one unit of a trace costs, in one country, at one time |
 | [`estimate`](schema/estimate.schema.json) | A monetary estimate with its interval, coverage and comparison to declared finance |
 | [`provenance`](schema/provenance.schema.json) | Where a record came from and what was done to it |
 | [`confidence`](schema/confidence.schema.json) | How much weight a record can bear, and why |
 | [`common`](schema/common.schema.json) | Shared building blocks: money, intervals, time windows, places, quantities |
 
+Identifier form, normalisation and the order in which a raw string resolves to an
+entity are specified in [ALIASES.md](ALIASES.md). That file is normative: a
+registry that disagrees with it is a bug in the registry.
+
 ## The shape of the pipeline
 
 ```
-observation  ──┐
-               ├──> estimate ──> comparison with declared finance
-unit-cost   ───┘
+field-observation ──> observation  ──┐
+                                     ├──> estimate ──> comparison with declared finance
+                      unit-cost   ───┘
 ```
 
 Observations carry no money. Pricing happens at estimation time using unit costs,
