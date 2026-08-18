@@ -46,7 +46,10 @@ In this order, always:
 5. Drop honorifics and titles at the start of a string, from the country
    configuration list (`Alh.`, `Dr`, `Hon.`, `Chief`, `Sen.`, ...).
 6. Expand nothing. Abbreviations are matched through the alias list, not by a
-   guessing rule.
+   guessing rule. The one exception: a string that normalises to single letters
+   separated by spaces is also indexed without the spaces, so that `P.B.` and
+   `PB` are the same key. Both forms occur in the same ad library, often in the
+   same week.
 
 Normalisation is for **matching only**. The stored label keeps its original form,
 diacritics included. A registry that has lost the accents of a name has damaged
